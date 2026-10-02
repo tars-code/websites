@@ -9,6 +9,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "seed": "node scripts/seed.mjs",
+    "import:supabase": "node --env-file=.env.supabase scripts/import-to-supabase.mjs",
     "test": "node --test tests/*.test.ts"
   },
   "dependencies": {
