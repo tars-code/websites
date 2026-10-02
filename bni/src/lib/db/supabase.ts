@@ -20,10 +20,10 @@ function rowFromDb<T>(row: Record<string, unknown>): T {
 
 let client: SupabaseClient | null = null;
 function getClient(url: string, key: string) {
-  client ??= createClient(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-    global: { fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }) },
-  });
+  // Keep Next's default fetch caching ("auto no cache"): never stored in the data cache,
+  // but public pages can still prerender and refresh via `revalidate` / revalidatePath.
+  // Forcing `cache: "no-store"` makes every ISR page dynamic and fails `next build`.
+  client ??= createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
   return client;
 }
 
