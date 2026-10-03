@@ -3,6 +3,7 @@ import { ArrowRight, CalendarDays, MapPin, MessageCircle, Users, Video } from "l
 import { chapterWhatsapp, meetingPlaceLines, meetingSchedule, placeOn } from "@/lib/chapter-text";
 import {
   getCategoryViews,
+  getAmbassadors,
   getChapter,
   getEventPhotos,
   getImg,
@@ -29,12 +30,13 @@ import { JsonLd, chapterJsonLd } from "@/components/site/json-ld";
 export const revalidate = 600;
 
 export default async function HomePage() {
-  const [chapter, next, snapshot, latest, members, categories, upcoming] = await Promise.all([
+  const [chapter, next, snapshot, latest, members, ambassadors, categories, upcoming] = await Promise.all([
     getChapter(),
     getNextMeeting(),
     getSnapshot(),
     getLatestMeetup(),
     getMembers(),
+    getAmbassadors(),
     getCategoryViews(),
     getUpcomingEvents(),
   ]);
@@ -119,6 +121,25 @@ export default async function HomePage() {
       <div className="mt-14 sm:mt-20">
         <LatestMeetup meetup={latest} photos={latestPhotos} chapter={chapter} today={today} />
       </div>
+
+      {/* ───────────── Launch ambassadors ───────────── */}
+      {ambassadors.length > 0 && (
+        <section aria-labelledby="ambassadors-heading" className="page-x mt-20 sm:mt-28">
+          <SectionHeader
+            id="ambassadors-heading"
+            eyebrow="Launch ambassadors"
+            title="Helping us launch"
+            description={`Experienced BNI members who are guiding ${chapter.name} through its launch.`}
+          />
+          <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {ambassadors.map((m) => (
+              <li key={m.id}>
+                <MemberRosterItem member={m} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* ───────────── Members ───────────── */}
       <section aria-labelledby="members-heading" className="page-x mt-20 sm:mt-28">
