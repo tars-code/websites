@@ -60,7 +60,7 @@ export function MemberForm({
               </>
             }
           />
-          <TextField name="role" label="Chapter role" defaultValue={member?.role} placeholder="e.g. President" hint="Leave blank for most members." />
+          <TextField name="role" label="Chapter role" defaultValue={member?.role} placeholder="e.g. President" hint="Leave blank for most members. “Launch Ambassador” lists them in a separate section, not as a member." />
         </div>
         <TextField name="headline" label="One-line introduction" defaultValue={member?.headline} maxLength={200} hint="e.g. “Helping families plan for retirement and their children's education.”" />
         <TextField name="about" label="About" multiline rows={5} defaultValue={member?.about} />

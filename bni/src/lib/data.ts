@@ -64,7 +64,14 @@ export interface MemberView extends Member {
   img: Img | null;
 }
 
-export const getMembers = cache(async (includeArchived: boolean = false) => {
+/**
+ * Launch ambassadors help start the chapter but don't hold a category seat, so
+ * they're listed in their own section and never counted as members. An admin
+ * marks someone as one through their chapter role.
+ */
+export const isAmbassador = (m: Pick<Member, "role">) => /ambassador/i.test(m.role);
+
+const getMemberViews = cache(async (includeArchived: boolean) => {
   const [rows, categories, photos] = await Promise.all([
     db().list("members"),
     getCategories(),
@@ -88,8 +95,16 @@ export const getMembers = cache(async (includeArchived: boolean = false) => {
     });
 });
 
+/** Chapter members — excludes launch ambassadors (see getAmbassadors). */
+export const getMembers = cache(async (includeArchived: boolean = false) =>
+  (await getMemberViews(includeArchived)).filter((m) => !isAmbassador(m)),
+);
+
+export const getAmbassadors = cache(async () => (await getMemberViews(false)).filter(isAmbassador));
+
+/** Any public profile: members and launch ambassadors. */
 export async function getMemberBySlug(slug: string) {
-  const members = await getMembers();
+  const members = await getMemberViews(false);
   return members.find((m) => m.slug === slug) ?? null;
 }
 

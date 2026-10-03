@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Users } from "lucide-react";
-import { getChapter, getMembers } from "@/lib/data";
+import { getAmbassadors, getChapter, getMembers } from "@/lib/data";
 import { ButtonLink } from "@/components/ui/button";
 import { PageIntro } from "@/components/ui/section";
 import { EmptyState } from "@/components/ui/states";
@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function MembersPage() {
-  const [chapter, members] = await Promise.all([getChapter(), getMembers()]);
+  const [chapter, members, ambassadors] = await Promise.all([getChapter(), getMembers(), getAmbassadors()]);
   const counts = new Map<string, { slug: string; name: string; count: number }>();
   for (const m of members) {
     if (!m.category) continue;
@@ -70,6 +70,20 @@ export default async function MembersPage() {
           >
             We&apos;re adding member profiles. The quickest way to meet everyone is to visit a meeting.
           </EmptyState>
+        )}
+
+        {ambassadors.length > 0 && (
+          <section aria-labelledby="ambassadors" className="mt-20 border-t border-line-strong pt-10">
+            <h2 id="ambassadors" className="display text-[1.8rem]">Launch ambassadors</h2>
+            <p className="mt-2 max-w-2xl text-muted">
+              Experienced BNI members who are helping launch {chapter.name}.
+            </p>
+            <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 lg:gap-x-6">
+              {ambassadors.map((m) => (
+                <MemberCard key={m.id} member={m} />
+              ))}
+            </div>
+          </section>
         )}
       </div>
     </>

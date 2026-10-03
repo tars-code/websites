@@ -49,6 +49,9 @@ export async function notifyVisitRequest(req: VisitRequest, chapterName: string)
           text,
           ...(req.email ? { reply_to: req.email } : {}),
         }),
+      }).then(async (res) => {
+        // Resend reports problems (unverified domain, bad key) as HTTP errors, not rejections.
+        if (!res.ok) throw new Error(`Resend ${res.status}: ${await res.text()}`);
       }),
     );
   }

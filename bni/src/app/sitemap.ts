@@ -1,13 +1,14 @@
 import type { MetadataRoute } from "next";
-import { getChapter, getMembers, getPastEvents, getUpcomingEvents } from "@/lib/data";
+import { getAmbassadors, getChapter, getMembers, getPastEvents, getUpcomingEvents } from "@/lib/data";
 import { env } from "@/lib/env";
 
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [chapter, members, past, upcoming] = await Promise.all([
+  const [chapter, members, ambassadors, past, upcoming] = await Promise.all([
     getChapter(),
     getMembers(),
+    getAmbassadors(),
     getPastEvents(),
     getUpcomingEvents(),
   ]);
@@ -27,7 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     pages.push({ url: `${base}/meetings/${e.slug}`, lastModified: e.updatedAt, priority: 0.5 });
   }
   if (chapter.membersIndexable) {
-    for (const m of members) {
+    for (const m of [...members, ...ambassadors]) {
       if (m.isSample) continue;
       pages.push({ url: `${base}/members/${m.slug}`, lastModified: m.updatedAt, priority: 0.5 });
     }
